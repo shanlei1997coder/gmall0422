@@ -1,0 +1,38 @@
+package com.atguigu.gmall0422.bean;
+
+import lombok.Data;
+
+import javax.persistence.Column;
+import javax.persistence.Id;
+import java.io.Serializable;
+
+/**
+ * @program: gmall0422
+ * @description: sku销售属性值
+ * @author: Mr.Lei
+ * @create: 2019-10-10 21:14
+ **/
+@Data
+public class SkuSaleAttrValue implements Serializable {
+
+    @Id
+    @Column
+    String id;
+
+    @Column
+    String skuId;
+
+    @Column
+    String saleAttrId;
+
+    @Column
+    String saleAttrValueId;
+
+    @Column
+    String saleAttrName;
+
+    @Column
+    String saleAttrValueName;
+
+}
+

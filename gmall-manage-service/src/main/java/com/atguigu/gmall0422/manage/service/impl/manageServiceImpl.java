@@ -49,6 +49,17 @@ public class manageServiceImpl implements ManageService{
     @Autowired
     private SpuImageMapper spuImageMapper;
 
+    @Autowired
+    private SkuAttrValueMapper skuAttrValueMapper;
+
+    @Autowired
+    private SkuImageMapper skuImageMapper;
+
+    @Autowired
+    private SkuSaleAttrValueMapper skuSaleAttrValueMapper;
+
+    @Autowired
+    private SkuInfoMapper skuInfoMapper;
 
 
     //查询一级分类
@@ -81,9 +92,10 @@ public class manageServiceImpl implements ManageService{
     //根据三级分类id查询平台属性
     @Override
     public List<BaseAttrInfo> getAttrInfoList(String catalog3Id) {
-        BaseAttrInfo baseAttrInfo = new BaseAttrInfo();
-        baseAttrInfo.setCatalog3Id(catalog3Id);
-        return baseAttrInfoMapper.select(baseAttrInfo);
+//        BaseAttrInfo baseAttrInfo = new BaseAttrInfo();
+//        baseAttrInfo.setCatalog3Id(catalog3Id);
+//        return baseAttrInfoMapper.select(baseAttrInfo);
+        return baseAttrInfoMapper.selectAttrInfoList(catalog3Id);
     }
 
     //添加平台属性和对应的属性值
@@ -202,7 +214,62 @@ public class manageServiceImpl implements ManageService{
             }
         }
 
+    }
 
+    //根据spuId查询商品下的图品列表
+    @Override
+    public List<SpuImage> getSpuImageList(String spuId) {
+        SpuImage spuImage = new SpuImage();
+        spuImage.setSpuId(spuId);
+        return spuImageMapper.select(spuImage);
+    }
+
+    // 根据spuId查询商品销售属性和销售属性值
+    @Override
+    public List<SpuSaleAttr> getSpuSaleAttrList(String spuId) {
+
+        return spuSaleAttrMapper.selectSpuSaleAttrList(spuId);
+    }
+
+    //保存sku的基本信息
+    @Override
+    @Transactional  //添加事务
+    public void saveSkuInfo(SkuInfo skuInfo) {
+
+        //需要向四个表中添加数据
+        //sku_info
+        skuInfoMapper.insertSelective(skuInfo);
+
+        //sku_image
+        //需要先将封装在sku_info中的图片列表取出来
+        List<SkuImage> skuImageList = skuInfo.getSkuImageList();
+        //判断不为空
+        if(skuImageList!=null && skuImageList.size()>0){
+            for (SkuImage skuImage : skuImageList) {
+                //前端传入的参数没有sku_id  需要手动设置sku_id
+                skuImage.setSkuId(skuInfo.getId());
+                skuImageMapper.insertSelective(skuImage);
+            }
+        }
+
+        //sku_attr_value
+        //从sku_info中取出
+        List<SkuAttrValue> skuAttrValueList = skuInfo.getSkuAttrValueList();
+        if(skuAttrValueList!=null && skuAttrValueList.size()>0){
+            for (SkuAttrValue skuAttrValue : skuAttrValueList) {
+                skuAttrValue.setSkuId(skuInfo.getId());
+                skuAttrValueMapper.insertSelective(skuAttrValue);
+            }
+        }
+
+        //sku_sale_attr_value
+        List<SkuSaleAttrValue> skuSaleAttrValueList = skuInfo.getSkuSaleAttrValueList();
+        if(skuSaleAttrValueList!=null && skuSaleAttrValueList.size()>0){
+            for (SkuSaleAttrValue skuSaleAttrValue : skuSaleAttrValueList) {
+                skuSaleAttrValue.setSkuId(skuInfo.getId());
+                skuSaleAttrValueMapper.insertSelective(skuSaleAttrValue);
+            }
+        }
 
     }
 }
