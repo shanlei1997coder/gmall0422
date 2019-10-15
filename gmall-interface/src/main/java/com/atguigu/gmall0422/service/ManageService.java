@@ -87,4 +87,32 @@ public interface ManageService {
      * @param skuInfo
      */
     void saveSkuInfo(SkuInfo skuInfo);
+
+    /**
+     * 根据skuId 查询sku基本信息
+     * @param skuId
+     * @return
+     */
+    SkuInfo getSkuInfo(String skuId);
+
+    /**
+     * 根据skuId查询商品图片列表
+     * @param skuId
+     * @return
+     */
+    List<SkuImage> getSkuImageList(String skuId);
+
+    /**
+     *  根据 skuId,spuId 查询 商品销售属性(包括sku商品锁定的销售属性值)
+     * @param skuInfo
+     * @return
+     **/
+    List<SpuSaleAttr> getSpuSaleAttrListCheckBySku(SkuInfo skuInfo);
+
+    /**
+     * 根据 spuId查询 商品切换时对应商品的销售属性值id和 skuid
+     * @param spuId
+     * @return
+     */
+    List<SkuSaleAttrValue> getSkuSaleAttrValueList(String spuId);
 }
